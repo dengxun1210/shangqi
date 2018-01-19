@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>广德研发试验中心试验运行实况</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="history/css/historyIndex.css">
+    <link rel="stylesheet" href="lib/fontawesome/css/font-awesome.min.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="header">
+        <div class="header-left">
+            <div class="button" id="carChoose">车辆选择<div class="button-arrow"></div></div>
+            <div class="button report">报告<div class="button-arrow"></div></div>
+        </div>
+
+        <div class="header-center">
+            <div class="setTime">
+                <div class="start">
+                    <div>起始时间</div>
+                    <div class="time year"><input type="text" value="2017" maxlength="4"></div>
+                    <div>-</div>
+                    <div class="time month"><input type="text" value="12" maxlength="2"></div>
+                    <div>-</div>
+                    <div class="time day"><input type="text" value="30" maxlength="2"></div>
+                    <div>/</div>
+                    <div class="time hour"><input type="text" value="10" maxlength="2"></div>
+                    <div>:</div>
+                    <div class="time minute"><input type="text" value="10" maxlength="2"></div>
+                    <div>:</div>
+                    <div class="time second"><input type="text" value="10" maxlength="2"></div>
+                </div>
+                <div class="stop">
+                    <div>结束时间</div>
+                    <div class="time year"><input type="text" value="2017" maxlength="4" onkeypress=""></div>
+                    <div>-</div>
+                    <div class="time month"><input type="text" value="12" maxlength="2"></div>
+                    <div>-</div>
+                    <div class="time day"><input type="text" value="31" maxlength="2"></div>
+                    <div>/</div>
+                    <div class="time hour"><input type="text" value="10" maxlength="2"></div>
+                    <div>:</div>
+                    <div class="time minute"><input type="text" value="10" maxlength="2"></div>
+                    <div>:</div>
+                    <div class="time second"><input type="text" value="10" maxlength="2"></div>
+                </div>
+                <div class="history-search">查询</div>
+            </div>
+        </div>
+        <div class="header-background"></div>
+        <div class="header-right">
+            <div class="fa fa-arrows-alt" id = "fullScreen"></div>
+            <div class="button" id="backIndex">返回上页<div class="button-arrow"></div></div>
+            <div class="button" id="carCategory">速度统计<div class="button-arrow"></div></div>
+        </div>
+    </div>
+    <div class="earthBorder">
+        <div></div>
+        <div></div>
+        <div class="corner"><span></span><span></span></div>
+        <div class="corner"><span></span><span></span></div>
+        <div class="earth-container" id="earthContainer"></div>
+    </div>
+
+</div>
+</body>
+<script src="lib/jquery-3.2.1.min.js"></script>
+<script src="history/js/historyPageConfig.js"></script>
+<script src="history/js/historyEarth.js"></script>
+</html>

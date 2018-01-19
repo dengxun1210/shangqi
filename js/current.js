@@ -1,10 +1,11 @@
-/**
+﻿/**
  * Created by Administrator on 2017/8/2.
  */
 /*球加载、气泡设置生成*/
 
 /*node服务器*/
 //var nodeIp = "http://172.16.182.148:3000/getData";
+//var nodeIp = "http://10.203.103.34:3000/getData";
 var nodeIp = "http://localhost:3000/getData";
 
 //页面宽度
@@ -62,12 +63,18 @@ var vinTrackPlaying = {};            //保存正在播放的轨迹（只针对�
 var vinVisibility = {};             //车辆是否开启显示（只代表车辆对应左边树上的checkbox是否开启，不代表实际车辆是否在地图上显示隐藏）
 
 
-var timeBias = 500;
-var speedTimeBias = 10000.0;  //速度标签刷新频率 单位：毫秒
-
-var timeMonitorTemp = 0;
-
+var timeBias = 1000;
+var speedTimeBias = 5000.0;  //速度标签刷新频率 单位：毫秒
 var trackLastTime = {};   //轨迹最后一个点的时间戳
+
+var trackPool = [];
+var infoPool = null;
+
+var timerecDB = 0;      //数据库时间戳
+var timerecPlayingTo = 0; //前端播放轨迹的时间终点
+
+var ratePool = 60000;   //从pool中取数据的频率
+var rateDB = 60000;     //从DB中取数据的频率
 
 
 $(function () {
@@ -134,10 +141,113 @@ function initCurrent() {
     $("#freeView").addClass("on");
     
     console.log("开始...");
-    tryTimeRecord();
+    startPlay();
     
 }
 
+//从数据库取初始数据
+function getInitData2(timeLen){
+    var timeSql = {
+        sql: "select TimeRecord from timerec"
+    };
+    $.ajax({
+        type: "POST",
+        url: nodeIp,
+        cache: false,
+        data: timeSql,
+        success: function (result) {
+            var recordTime = result[0].TimeRecord;
+            var timeFrom = recordTime-timeLen;
+            var timeTo = recordTime;
+            timerecDB = timeTo;
+            var timenow = new Date().getTime();
+            var trackSql = {
+                sql: "select * from track where SamplingTime >= "+timeFrom+" and SamplingTime <"+timeTo+" ORDER BY SamplingTime"
+            };
+            var results = [];
+            $.ajax({
+                type: "POST",
+                url: nodeIp,
+                cache: false,
+                data: trackSql,
+                success: function (result0) {
+                    var ttt = new Date().getTime()-timenow;
+                    console.debug('取初始数据：'+timeFrom+'--'+timeTo+',取出数据条数：'+result0.length+',耗时：'+ttt);
+                    if (result0.length === 0) {
+                        alert('获取初始轨迹出错');
+                        return;
+                    }
+                    trackPool = result0;//装入track池
+                    var carSql = {
+                        sql: "select * from vehicleinfo"
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: nodeIp,
+                        cache: false,
+                        data: carSql,
+                        success: function (result1) {
+                            if (result1.length === 0) {
+                                alert('获取初始车辆信息出错');
+                                return;
+                            }
+                            infoPool = result1;//装入info池
+                            timerecPlayingTo = timeFrom+ratePool;
+                            ///
+                            document.getElementById('loading-msg').innerHTML = 'Finished...';//初始化完成
+                            setTimeout(function () {
+                                $("#loading").remove();
+                                $("#loading-mask").remove();
+                                $("#mainwrapper").show();
+                                initMap();
+                            }, 1000);
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
+
+//开始在地图上播放轨迹
+function startPlay(){
+    getDataFromPool();
+    setInterval(getDataFromPool, ratePool);//设置定时器从pool取数据
+    tryGetDBData();
+}
+
+//从pool中取数据
+function getDataFromPool() {
+    var trackPool_copy = trackPool;
+    var trackLen = trackPool_copy.length;
+    var result0 = [];
+    var num = 0;
+    for(var i=0;i<trackLen;i++){
+        if(trackPool_copy[i].SamplingTime<timerecPlayingTo){
+            result0.push(trackPool_copy[i]);
+            num++;
+        }
+        else{
+            break;
+        }
+    }  
+    trackPool.splice(0, num);//删除pool中的数据
+    console.debug('从pool中取数据<'+timerecPlayingTo+',取出并删除数据'+num+'条');
+    timerecPlayingTo+=ratePool;
+
+    updateTrackData([result0,infoPool]);
+}
+
+//组织track和info数据
+function updateTrackData(results){
+    setCurrentData(results);
+    //基础更新根据新旧数据增减来增加轨迹
+    basicUpdateData();
+    //console.debug('needAddTrack增加track：'+needAddTrack.length);
+    createTrack(needAddTrack);
+}
+
+//DB小轮询，检查时间戳
 function tryTimeRecord(){    
     timeRecordInterval = setInterval(function () {
         var carSql = {
@@ -150,11 +260,9 @@ function tryTimeRecord(){
             data: carSql,
             success: function (result1) {
                 var recordTime = result1[0].TimeRecord;
-                if(recordTime >= timerec){
-                    //console.debug('tryTimeRecord数据库rec时间戳有效：'+recordTime);
-                    timerec = recordTime+20000;
-                    makeTrack(recordTime);                    
-                    tryMakeTrack();
+                if(recordTime >= timerecDB){
+                    getDBData(recordTime);                    
+                    tryGetDBData();
                     clearInterval(timeRecordInterval);
                 }
             }
@@ -162,17 +270,10 @@ function tryTimeRecord(){
     }, 500);
 }
 
-//CURRENT 首先获取实时路径数据，1秒钟之后向路径添加轨迹点
-function makeTrack(recordTime) {
-    //获得实时数据
-    getCurrentData(recordTime);
-    //给轨迹添加点
-    currentTimeout = setTimeout(function () {
-        showTrack();
-    },1000);
-}
 
-function tryMakeTrack() {
+
+//以rateDB为频率，从db取数据
+function tryGetDBData() {
     currentInterval = setInterval(function () {
         var carSql = {
             sql: "select TimeRecord from timerec"
@@ -184,10 +285,8 @@ function tryMakeTrack() {
             data: carSql,
             success: function (result1) {
                 var recordTime = result1[0].TimeRecord;
-                if(recordTime >= timerec){
-                    //console.debug('tryMakeTrack数据库rec时间戳有效：'+recordTime);    
-                    timerec = recordTime+20000;               
-                    makeTrack(recordTime);                  
+                if(recordTime >= timerecDB){
+                    getDBData(recordTime);                  
                 }
                 else{
                     clearInterval(currentInterval);
@@ -195,45 +294,26 @@ function tryMakeTrack() {
                 }
             }
         });
-    }, 20000);
+    }, rateDB);
 }
 
-function deleteCurrentData(timeFrom,timeTo){
-    var sql = {
-        sql: "delete from track where SamplingTime BETWEEN "+timeFrom+" and "+timeTo
-    };
-    $.ajax({
-        type: "POST",
-        url: nodeIp,
-        cache: false,
-        data: sql,
-        success: function (result) {
-        }
-    });
-}
-
-//CURRENT 获得数据
-function getCurrentData(recordTime) {
-    var timeFrom = recordTime-900000;
-    var timeTo = timeFrom+20000;
-
-    var timenow = new Date().getTime();
+//从数据库取数据
+function getDBData(timeTo){
     var trackSql = {
-        sql: "select * from track where SamplingTime >= "+timeFrom+" and SamplingTime <"+timeTo
+        sql: "select * from track where SamplingTime >= "+timerecDB+" and SamplingTime <"+timeTo
     };
-    var results = [];
+    var timenow = new Date().getTime();
     $.ajax({
         type: "POST",
         url: nodeIp,
         cache: false,
         data: trackSql,
         success: function (result0) {
-            //deleteCurrentData(timeFrom,timeTo);//删除数据库中的track数据
             var ttt = new Date().getTime()-timenow;
-            console.debug('取数据：'+timeFrom+'--'+timeTo+',取出数据条数：'+result0.length+',耗时：'+ttt);
-            results.push(result0);
-            if (result0.length === 0) {
-                return;
+            console.debug('从数据库取数据：'+timerecDB+'--'+timeTo+',取出数据条数：'+result0.length+',耗时：'+ttt);
+            timerecDB = timeTo;
+            for(var i=0;i<result0.length;i++){
+                trackPool.push(result0[i]);//装入track池
             }
             var carSql = {
                 sql: "select * from vehicleinfo"
@@ -244,17 +324,22 @@ function getCurrentData(recordTime) {
                 cache: false,
                 data: carSql,
                 success: function (result1) {
-                    results.push(result1);
-                    setCurrentData(results);
-                    //基础更新根据新旧数据增减来增加轨迹
-                    basicUpdateData();
-                    //console.debug('needAddTrack增加track：'+needAddTrack.length);
-                    createTrack(needAddTrack);
+                    infoPool = result1;//装入info池
                 }
             });
         }
     });
 }
+////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
 
 
 //整理实时数据格式
@@ -322,23 +407,34 @@ function setCurrentData(result) {
         vinNumber = trackNode.VinNumber;
         if(vinNumber != vinNumber_before){
             bk_before = 0;
-            tempii++;
         }
         if(vinNumbers.indexOf(vinNumber) !== -1){//如果track的vinnumber在车辆表中存在
             var bk = trackNode.BK;
             var len = currentTrackData[vinNumber].length;
             //dengxun
             if(bk_before===0){
-                /*
-                if(currentTrackData[vinNumber][len-1].length>3){
-                    continue;
-                }*/
-                //前0，加点到track
-                currentTrackData[vinNumber][len-1].push([trackNode.Longtitude, trackNode.Latitude, trackNode.height, trackNode.SamplingTime, trackNode.Speed]);
+                if(bk===2){
+                    //0-2，创建track
+                   currentTrackData[vinNumber].push([[trackNode.Longtitude, trackNode.Latitude, trackNode.height, trackNode.SamplingTime, trackNode.Speed]]); 
+                }
+                else{
+                    //0-1，0-0，加点到track
+                    currentTrackData[vinNumber][len-1].push([trackNode.Longtitude, trackNode.Latitude, trackNode.height, trackNode.SamplingTime, trackNode.Speed]);
+                }
             }
-            else if(bk===0){
-                //前1后0，创建track
-                currentTrackData[vinNumber].push([[trackNode.Longtitude, trackNode.Latitude, trackNode.height, trackNode.SamplingTime, trackNode.Speed]]);
+            else if(bk_before===1){
+                //1-X，创建track
+                currentTrackData[vinNumber].push([[trackNode.Longtitude, trackNode.Latitude, trackNode.height, trackNode.SamplingTime, trackNode.Speed]]); 
+            }
+            else if(bk_before===2){
+                if(bk===2){
+                    //2-2，加点到track
+                   currentTrackData[vinNumber][len-1].push([trackNode.Longtitude, trackNode.Latitude, trackNode.height, trackNode.SamplingTime, trackNode.Speed]);
+                }
+                else{
+                    //0-1，0-0，加点到track
+                    currentTrackData[vinNumber].push([[trackNode.Longtitude, trackNode.Latitude, trackNode.height, trackNode.SamplingTime, trackNode.Speed]]); 
+                }
             }
             bk_before = bk;
         }
@@ -358,9 +454,9 @@ function setCurrentData(result) {
             currentCarData[i][0] = "1";
             ++online;
         }
-        //新增的车辆，此时还没有在树上显示，所以完全由在线离线判断其是否显示轨迹
-        if(vinVisibility[i] === undefined){    
-            vinVisibility[i] =  firstTrackLen === 1? offlineStatus:onlineStatus;
+        //新增的车辆，不管在线离线，一律默认勾选
+        if(vinVisibility[i] === undefined){
+            vinVisibility[i] = true;
         }
     }
     //console.debug('在线:'+online+'离线:'+offline);
@@ -375,7 +471,7 @@ function basicUpdateData() {
     for (var i = 0; i < vinNumbers.length; i++) {
         var vinNumber = vinNumbers[i];
         if (oldVinNumbers.indexOf(vinNumber) === -1) {
-            //dengxun
+            //dengxun  新增车辆的处理
             vinTrack[vinNumber] = [];
             var preguid = '';
             for (var j = 0; j < currentTrackData[vinNumber].length; j++) {
@@ -663,20 +759,13 @@ function setTrackStatus() {
             else{
                 vinTrackPlaying[vinNumber] = x;
                 var visible = onlineStatus;
+                //1.点击了在线按钮，但是树上没勾选--->不显示
+                //2.没有点击在线按钮，树上勾选--->不显示
                 if(visible && vinVisibility[vinNumber] !== undefined){
                     visible = vinVisibility[vinNumber];
                 }
                 showHideTrack(x, visible);
                 setSpeedTimeout2(track, vinNumber, 0);
-                /*
-                if(visible){
-                    temp1++;
-                }
-                else{
-                    console.debug('隐藏在线车辆：'+vinNumber+','+vinVisibility[vinNumber]);
-                    temp2++;
-                }*/
-                //console.debug('显示轨迹：'+x);
             }
         } else {
             changeColor(vinNumber, 0xff999999);
@@ -684,17 +773,8 @@ function setTrackStatus() {
             if(visible && vinVisibility[vinNumber] !== undefined){
                 visible = vinVisibility[vinNumber];
             }
-            showHideTrack(x, visible);
-            /*
-            if(visible){
-                temp3++;
-            }
-            else{
-                temp4++;
-            }*/
-        }
+            showHideTrack(x, visible);        }
     }
-    //console.debug('地图实际显示：在线：显示'+temp1+',隐藏'+temp2+'离线：显示'+temp3+',隐藏'+temp4);
 }
 
 function doSetTimeout_track(vinNumber,indexInGroup,x){
@@ -707,10 +787,8 @@ function doSetTimeout_track(vinNumber,indexInGroup,x){
             showHideTrack(x, true);
         }
         else{
-            console.debug('注意！下一条轨迹没有正确显示：'+vinNumber+','+onlineStatus+','+vinVisibility[vinNumber]+','+indexInGroup['time']);
+            console.debug('注意！车辆未勾选或离线，下一条轨迹不显示：'+vinNumber+','+onlineStatus+','+vinVisibility[vinNumber]+','+indexInGroup['time']);
         }
-        //console.debug('切换同车轨迹：'+vinNumber+',时间为'+indexInGroup['time']);
-
     },indexInGroup['time']);
     trackIndexSetTimeArr.push(indexTrackTime);
 }
@@ -730,7 +808,6 @@ function clickOnlineOffline(clickNode, line) {
             if(oldCarData[x] != null) {
                 status = oldCarData[x][0];
                 if (status === line) {
-                    vinVisibility[x] = false;
                     for (var i = 0; i <oldVinTrack[x].length; i++) {
                         showHideTrack(oldVinTrack[x][i], false)
                     }
@@ -750,17 +827,18 @@ function clickOnlineOffline(clickNode, line) {
             if(oldCarData[x] != null){
                 status = oldCarData[x][0];
                 if (status === line) {
-                    vinVisibility[x] = true;
                     for (var i = 0; i <oldVinTrack[x].length; i++) {
-                        if(line === "1" && oldVinTrack[x].length>1){
-                            //如果是显示在线车辆，则要特殊判断，只显示正在播放的唯一轨迹
-                            if(vinTrackPlaying[x] === oldVinTrack[x][i])
-                            {
-                                showHideTrack(oldVinTrack[x][i], true)
+                        if(vinVisibility[x]){
+                           if(line === "1" && oldVinTrack[x].length>1){
+                                //如果是显示在线车辆，则要特殊判断，只显示正在播放的唯一轨迹
+                                if(vinTrackPlaying[x] === oldVinTrack[x][i])
+                                {
+                                    showHideTrack(oldVinTrack[x][i], true)
+                                }
                             }
-                        }
-                        else{
-                            showHideTrack(oldVinTrack[x][i], true)
+                            else{
+                                showHideTrack(oldVinTrack[x][i], true)
+                            } 
                         }
                     }
                 }
@@ -771,10 +849,6 @@ function clickOnlineOffline(clickNode, line) {
         } else {
             offlineStatus = true;
         }
-    }
-    //更新气泡
-    if (ballon != null) {
-        ballon.InvokeScript("setOnOffStatus", [show,line]);
     }
 }
 

@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<!-- saved from url=(0014)about:internet -->
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Title</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/historyChart.css">
+    <link rel="stylesheet" href="../../lib/fontawesome/css/font-awesome.min.css">
+    <script src="../../lib/echarts.common.min.js"></script>
+</head>
+<body>
+<div class="wrapper">
+    <div class="arrow one"></div>
+    <div class="arrow two"></div>
+
+    <div class="text"></div>
+    <div class="chartContainer">
+        <div class="chart" id="chart"></div>
+        <div id="pointer"></div>
+        <div class="chartCover" id="chartCover"></div>
+    </div>
+    <div class="button">
+        <div></div>
+        <div></div>
+        <div class="button-left">
+            <div id="tagChoose">VIN<span class="fa fa-caret-down"></span></div>
+            <div id="tagDetail">
+                <span id="noTag">无</span>
+                <!--<span id="speedProject">速度-工程号</span>-->
+                <!--<span id="speedCode">速度-编号</span>-->
+                <span id="vinNumber">VIN</span>
+                <span id="project">工程号</span>
+                <span id="testId">试车场编号</span>
+            </div>
+            <div id="carView">
+                <span class="fa fa-dot-circle-o">自由视角</span>
+                <span class="fa fa-circle-o">第一人称</span>
+                <span class="fa fa-circle-o">追踪</span>
+            </div>
+        </div>
+
+        <div class="button-right">
+            <div class="fa fa-play-circle-o" id="pauseTrack">暂停</div>
+            <div class="fa fa-pause-circle-o" id="stopTrack">停止</div>
+            <div class="fa fa-dot-circle-o" id="mouseTrack">鼠标跟踪定位</div>
+        </div>
+    </div>
+    <div class="cover"></div>
+</div>
+<script src="../../lib/jquery-3.2.1.min.js"></script>
+<script src="../js/historyChart.js"></script>
+</body>
+</html>

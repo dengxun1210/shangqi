@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Created by Administrator on 2017/12/28.
  */
 var colors = [
@@ -36,6 +36,11 @@ function main(obj) {
 }
 //页面事件
 function pageClick() {
+        /*胡页面跳转start*/
+    $(".history-start").click(function () {
+        m_parentFun.window.location.href = "http://10.203.103.34:3000/index?history";
+    });
+    /*胡页面跳转end*/
     //点击视角
     $(".car-view .fa").click(function () {
         var viewtype = $(this).next().html();
@@ -62,6 +67,8 @@ function pageClick() {
             }
         }
     });
+
+   
 
     //点击标签框
     $("#chooseTag").click(function () {
@@ -384,6 +391,7 @@ jQuery.fn.initTreeList = function(groupData, needColor, carData, vinVisibility){
                 var groupNode = $(groupsDom[g]).parent();
                 var carNodes = $(groupsDom[g]).parent().parent().find(".trackName");
                 var f_ifaction = false;
+		
                 for(var i=0;i<carNodes.length;i++){
                     var vinName = $(carNodes[i]).html();
                     if((carOnlineOrNot[vinName] === "green" && m_parentFun.getOnOffStatus(1)) || (carOnlineOrNot[vinName] === "red" && m_parentFun.getOnOffStatus(2))){

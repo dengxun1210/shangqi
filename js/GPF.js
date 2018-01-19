@@ -93,6 +93,7 @@ function createTrack(trackIds, trackIndex, history) {
     }
     var trackId = trackIds[trackIndex];
     if(trackId === undefined){
+        showTrack();
         return;
     }
     var trackName = trackVin[trackId];
@@ -114,7 +115,8 @@ function createTrack(trackIds, trackIndex, history) {
         if (type === 2) {
             var track = earth.Factory.CreateGPSTrack(trackId, trackName);
             track.DataType = 3;
- if(trackName=="LSGUL83L3K0990095"){
+            
+            if(trackName=="LSGVF530XKY000027"){
              track.Visibility = true;
             }else{
             track.Visibility = false;}
