@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- saved from url=(0014)about:internet -->
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="lib/fontawesome/css/font-awesome.min.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="header on">
+        <div class="header-left">
+            <div class="button on" id="carChoose">车辆选择<div class="button-arrow"></div></div>
+            <div class="button report">报告<div class="button-arrow"></div></div>
+            <div class="button on" id="online">在线：</div>
+            <div class="button" id="offline">离线：</div>
+        </div>
+        <h1 class="title">广德研发实验中心试验运行实况</h1>
+        <div class="header-right">
+            <div class="fa fa-arrows-alt"></div>
+            <div class="header-time">2017-12-20 11:53:53</div>
+            <div class="header-search"><span class="fa fa-search"></span><input type="text" placeholder="查询道路、建筑物" autocomplete="off"></div>
+        </div>
+        <div class="header-history hide">
+            <div class="button showCar">返回上页<div class="button-arrow"></div></div>
+            <div class="button report">速度统计<div class="button-arrow"></div></div>
+            <div class="setTime">
+                <div class="start">
+                    <div>起始时间</div>
+                    <div class="time day"><span>2012-10-10</span><span class="fa fa-calendar"></span></div>
+                    <div class="time hour"><span>07</span><span class="updown"><span class="up"></span><span class="down"></span></span><span>时</span></div>
+                    <div class="time minute"><span>08</span><span class="updown"><span class="up"></span><span class="down"></span></span><span>分</span></div>
+                    <div class="time second"><span>08</span><span class="updown"><span class="up"></span><span class="down"></span></span><span>秒</span></div>
+                </div>
+                <div class="stop">
+                    <div>结束时间</div>
+                    <div class="time day"><span>2012-10-10</span><span class="fa fa-calendar"></span></div>
+                    <div class="time hour"><span>07</span><span class="updown"><span class="up"></span><span class="down"></span></span><span>时</span></div>
+                    <div class="time minute"><span>08</span><span class="updown"><span class="up"></span><span class="down"></span></span><span>分</span></div>
+                    <div class="time minute"><span>08</span><span class="updown"><span class="up"></span><span class="down"></span></span><span>秒</span></div>
+                </div>
+                <div class="history-search">查询</div>
+            </div>
+        </div>
+        <div class="header-background" hide></div>
+    </div>
+    <div class="earthBorder">
+        <div></div>
+        <div></div>
+        <div class="corner"><span></span><span></span></div>
+        <div class="corner"><span></span><span></span></div>
+        <div class="earth-container" id="earthContainer"></div>
+    </div>
+
+</div>
+</body>
+<script src="lib/jquery-3.2.1.min.js"></script>
+<script src="js/pageConfig.js"></script>
+<script src="js/pageEvent.js"></script>
+<script src="js/GPF.js"></script>
+<!--<script src="lib/tree/tree.js"></script>-->
+<script src="js/earth.js"></script>
+<script src="js/current.js"></script>
+</html>

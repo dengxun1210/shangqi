@@ -1,0 +1,52 @@
+html, body, div, span, input, ul, li, span, h1{
+    margin: 0;
+    padding: 0;
+    /*box-sizing: border-box;*/
+    cursor: default;
+}
+table, tr, td{
+    background: #eee;
+}
+
+
+body{
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Chrome/Safari/Opera */
+    -khtml-user-select: none; /* Konqueror */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+not supported by any browser */
+}
+span{
+    display: inline-block;
+}
+input{
+    outline: none;
+    vertical-align: middle;
+    font-family: 微软雅黑;
+    background: none;
+    border:none;
+}
+
+
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+    color: #666;
+    font-size: 1rem;
+}
+input:-moz-placeholder, textarea:-moz-placeholder {
+    color: #666;
+    font-size: 1rem;
+
+}
+input::-moz-placeholder, textarea::-moz-placeholder {
+    color: #666;
+    font-size: 1rem;
+
+}
+input:-ms-input-placeholder, textarea:-ms-input-placeholder {
+    color: #666;
+    font-size: 1rem;
+}
+
+input::-ms-clear{display:none;}

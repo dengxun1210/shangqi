@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="lib/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/ballon.css">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="car-tree" id="carTree">
+            <div class="arrow one"></div>
+            <div class="arrow two"></div>
+            <div class="car-search">
+                <div class="title">车辆查询</div>
+                <!--<div class="history-start disable">历史轨迹</div>-->
+                <div class="content"><span class="fa fa-search" id="searchCar"></span><input id="searchValue" type="text" value=""></div>
+            </div>
+            <div class="car-view">
+                <div class="title">视角</div>
+                <div class="content">
+                    <div id="freeView" class="on"><span class="fa fa-dot-circle-o"></span><span>自由视角</span></div>
+                    <div id="firstView"><span class="fa fa-circle-o"></span><span>第一人称</span></div>
+                    <div id="thirdView"><span class="fa fa-circle-o"></span><span>追踪</span></div>
+                </div>
+            </div>
+            <div class="car-tag">
+                <div class="title">标签显示</div>
+                <div class="content" id="chooseTag">
+                    <span>VIN</span>
+                    <span class="fa fa-caret-down"></span>
+                </div>
+                <div class="tag-detail" id="tagDetail">
+                    <span id="noTag">无</span>
+                    <span id="speedProject">速度-工程号</span>
+                    <span id="speedCode">速度-编号</span>
+                    <span class="on" id="vinNumber">VIN</span>
+                    <span id="project">工程号</span>
+                    <span id="testId">试车场编号</span>
+                </div>
+            </div>
+            <div class="tree-body">
+                <!--<div class='group'>
+                    <div class='group-node'>
+                        <span></span>
+                        <span class='colorTable'></span>
+                        <span class='groupName'>CFT数据组</span>
+                        <span class='checkboxInput fa-stack fa-lg'>
+                            <i class='fa fa-square-o fa-stack-1x'></i>
+                            <i class='fa fa-check fa-stack-1x'></i></span>
+                    </div>
+                    <div class="childs-node">
+                        <div class="child-node offline">
+                            <span>车辆一</span>
+                            <span class="carStatus">（离线）</span>
+                            <span class='checkboxInput fa-stack fa-lg'>
+                                <i class='fa fa-square-o fa-stack-1x'></i>
+                                <i class='fa fa-check fa-stack-1x'></i></span>
+                        </div>
+                        <div class="child-node online">
+                            <span>车辆二</span>
+                            <span class="carStatus">（在线）</span>
+                            <span class='checkboxInput fa-stack fa-lg'>
+                                <i class='fa fa-square-o fa-stack-1x'></i>
+                                <i class='fa fa-check fa-stack-1x'></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class='group'>
+                    <div class='group-node'>
+                        <span></span>
+                        <span class='colorTable' style='background:red'></span>
+                        <span class='groupName'>CFT数据组</span>
+                        <span class='checkboxInput fa-stack fa-lg'>
+                            <i class='fa fa-square-o fa-stack-1x'></i>
+                            <i class='fa fa-check fa-stack-1x'></i></span>
+                    </div>
+                    <div class="childs-node">
+                        <div class="child-node offline">
+                            <span>车辆一</span>
+                            <span class="carStatus">（离线）</span>
+                            <span class='checkboxInput fa-stack fa-lg'>
+                                <i class='fa fa-square-o fa-stack-1x'></i>
+                                <i class='fa fa-check fa-stack-1x'></i></span>
+                        </div>
+                        <div class="child-node online">
+                            <span>车辆二</span>
+                            <span class="carStatus">（在线）</span>
+                            <span class='checkboxInput fa-stack fa-lg'>
+                                <i class='fa fa-square-o fa-stack-1x'></i>
+                                <i class='fa fa-check fa-stack-1x'></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class='group'>
+                    <div class='group-node'>
+                        <span></span>
+                        <span class='colorTable' style='background:red'></span>
+                        <span class='groupName'>CFT数据组</span>
+                        <span class='checkboxInput fa-stack fa-lg'>
+                            <i class='fa fa-square-o fa-stack-1x'></i>
+                            <i class='fa fa-check fa-stack-1x'></i></span>
+                    </div>
+                    <div class="childs-node">
+                        <div class="child-node offline">
+                            <span>车辆一</span>
+                            <span class="carStatus">（离线）</span>
+                            <span class='checkboxInput fa-stack fa-lg'>
+                                <i class='fa fa-square-o fa-stack-1x'></i>
+                                <i class='fa fa-check fa-stack-1x'></i></span>
+                        </div>
+                        <div class="child-node online">
+                            <span>车辆二</span>
+                            <span class="carStatus">（在线）</span>
+                            <span class='checkboxInput fa-stack fa-lg'>
+                                <i class='fa fa-square-o fa-stack-1x'></i>
+                                <i class='fa fa-check fa-stack-1x'></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class='group'>
+                    <div class='group-node'>
+                        <span></span>
+                        <span class='colorTable' style='background:red'></span>
+                        <span class='groupName'>CFT数据组</span>
+                        <span class='checkboxInput fa-stack fa-lg'>
+                            <i class='fa fa-square-o fa-stack-1x'></i>
+                            <i class='fa fa-check fa-stack-1x'></i></span>
+                    </div>
+                    <div class="childs-node">
+                        <div class="child-node offline">
+                            <span>车辆一</span>
+                            <span class="carStatus">（离线）</span>
+                            <span class='checkboxInput fa-stack fa-lg'>
+                                <i class='fa fa-square-o fa-stack-1x'></i>
+                                <i class='fa fa-check fa-stack-1x'></i></span>
+                        </div>
+                        <div class="child-node online">
+                            <span>车辆二</span>
+                            <span class="carStatus">（在线）</span>
+                            <span class='checkboxInput fa-stack fa-lg'>
+                                <i class='fa fa-square-o fa-stack-1x'></i>
+                                <i class='fa fa-check fa-stack-1x'></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class='group uncheck'>
+                    <div class='group-node'>
+                        <span></span>
+                        <span class='colorTable' style='background:red'></span>
+                        <span class='groupName'>CFT数据组</span>
+                        <span class='checkboxInput fa-stack fa-lg'>
+                            <i class='fa fa-square-o fa-stack-1x'></i>
+                            <i class='fa fa-check fa-stack-1x'></i></span>
+                    </div>
+                    <div class="childs-node">
+                        <div class="child-node offline">
+                            <span>车辆一</span>
+                            <span class="carStatus">（离线）</span>
+                            <span class='checkboxInput fa-stack fa-lg'>
+                                <i class='fa fa-square-o fa-stack-1x'></i>
+                                <i class='fa fa-check fa-stack-1x'></i></span>
+                        </div>
+                        <div class="child-node online">
+                            <span>车辆一</span>
+                            <span class="carStatus">（在线）</span>
+                            <span class='checkboxInput fa-stack fa-lg'>
+                                <i class='fa fa-square-o fa-stack-1x'></i>
+                                <i class='fa fa-check fa-stack-1x'></i></span>
+                        </div>
+                    </div>
+                </div>-->
+                <!--
+                <div class="colors">
+                    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>-->
+            </div>
+            <div class="choose-all">
+                <span>全选</span>
+                <span style='font-size: 15px' class='checkboxInput fa-stack fa-lg on'>
+                    <i class='fa fa-square-o fa-stack-1x'></i>
+                    <i class='fa fa-check fa-stack-1x'></i>
+                </span>
+            </div>
+        </div>
+
+    </div>
+</body>
+<script src="lib/jquery-3.2.1.min.js"></script>
+<!--<script src="lib/tree/tree.js"></script>-->
+<script src="js/ballon.js"></script>
+</html>

@@ -1,0 +1,73 @@
+.chooseTime{
+    position: absolute;
+    top:2rem;
+    left:0px;
+    width: 15rem;
+    background: #ffffff;
+    border: 1px solid rgb(137, 137, 137);
+    box-sizing: border-box;
+    display: none;
+}
+.chooseTime .chooseYearMonth{
+    height: 2rem;
+    line-height: 2rem;
+    border-bottom:  1px solid rgb(137, 137, 137);
+    position: relative;
+}
+.chooseTime .chooseYearMonth>span:not(:nth-child(2))>span{
+    cursor: pointer;
+}
+.chooseTime .chooseYearMonth>span:nth-child(1){
+    float: left;
+    padding-left: 10px;
+}
+.chooseTime .chooseYearMonth>span:nth-child(1)>span:nth-child(1){
+    margin-right: 10px;
+}
+.chooseTime .chooseYearMonth>span:nth-child(2){
+    position: absolute;
+    left: 50%;
+    margin-left: -80px;
+    width: 160px;
+    text-align: center;
+}
+.chooseTime .chooseYearMonth>span:nth-child(2)>span:first-child,
+.chooseTime .chooseYearMonth>span:nth-child(2)>span:nth-child(3){
+    width: 50px;
+}
+.chooseTime .chooseYearMonth>span:nth-child(3){
+    float: right;
+    padding-right: 10px;
+}
+.chooseTime .chooseYearMonth>span:nth-child(3)>span:nth-child(1){
+    margin-right: 10px;
+}
+.chooseTime .chooseDay{
+    padding: 10px;
+}
+.chooseTime .chooseDay table{
+    width: 100%;
+    background: #ffffff;
+    border-collapse: collapse;
+    border: none;
+}
+.chooseTime .chooseDay table tr, .chooseTime .chooseDay table td{
+    border: none;
+    background: #ffffff;
+    line-height: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+}
+.chooseTime .chooseDay table .notThisMonth{
+    background: linear-gradient(rgb(229, 229, 229), rgb(209, 209, 209));;
+}
+.chooseTime .chooseDay table .notThisMonth:hover{
+    background: #aaaaaa;
+}
+.chooseTime .chooseDay table tr:not(:nth-child(1)) td:not(.notThisMonth):hover{
+    background: rgb(209, 227, 247);
+    color: rgb(32, 120, 203);
+}
+.chooseTime .chooseDay table tr{
+    height: 1.5rem;
+}
