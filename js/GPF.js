@@ -115,12 +115,12 @@ function createTrack(trackIds, trackIndex, history) {
         if (type === 2) {
             var track = earth.Factory.CreateGPSTrack(trackId, trackName);
             track.DataType = 3;
-            
-            if(trackName=="LSGVF530XKY000027"){
+            /*
+            if(trackName=="LSFAM11J3HA024040"){
              track.Visibility = true;
             }else{
-            track.Visibility = false;}
-            //track.Visibility = false;
+            track.Visibility = false;}*/
+            track.Visibility = false;
             track.ShowName = true;
             track.ShowInfomation = false;
             track.NameColor = 0xffffffff;

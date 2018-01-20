@@ -234,9 +234,26 @@ function getDataFromPool() {
     trackPool.splice(0, num);//删除pool中的数据
     console.debug('从pool中取数据<'+timerecPlayingTo+',取出并删除数据'+num+'条');
     timerecPlayingTo+=ratePool;
-
+    result0 = JsonSort(result0,'VinNumber');
     updateTrackData([result0,infoPool]);
 }
+
+//排序
+function JsonSort(json,key){
+     for(var j=1,jl=json.length;j < jl;j++){
+         var temp = json[j],
+             val  = temp[key],
+             i    = j-1;
+         while(i >=0 && json[i][key]>val){
+             json[i+1] = json[i];
+             i = i-1;    
+         }
+         json[i+1] = temp;
+         
+     }
+     return json;
+}
+
 
 //组织track和info数据
 function updateTrackData(results){
@@ -400,19 +417,22 @@ function setCurrentData(result) {
 
     //路径点信息
     var vinNumber_before = '';
-    var bk_before = 0;
+    var bk_before = -1;
     var tempii = 0;
     for (i = 0; i < trackDataLen; i++) {
         var trackNode = trackData[i];
         vinNumber = trackNode.VinNumber;
         if(vinNumber != vinNumber_before){
-            bk_before = 0;
+            bk_before = -1;
         }
         if(vinNumbers.indexOf(vinNumber) !== -1){//如果track的vinnumber在车辆表中存在
             var bk = trackNode.BK;
             var len = currentTrackData[vinNumber].length;
             //dengxun
-            if(bk_before===0){
+            if(bk_before===-1){
+                currentTrackData[vinNumber][len-1].push([trackNode.Longtitude, trackNode.Latitude, trackNode.height, trackNode.SamplingTime, trackNode.Speed]);
+            }
+            else if(bk_before===0){
                 if(bk===2){
                     //0-2，创建track
                    currentTrackData[vinNumber].push([[trackNode.Longtitude, trackNode.Latitude, trackNode.height, trackNode.SamplingTime, trackNode.Speed]]); 
