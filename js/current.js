@@ -54,9 +54,13 @@ var trackIndexInGroup = {};
 var trackIndexSetTimeArr = [];     //track bk时间间隔
 
 var colors = [
-            '009911', '993300', '339393', '000080', '333399', '399339', '800000', 'FF6600',
-            '808000', '008000'
-        ];
+    '009911', '993300', '339393', '000080', '333399', '399339', '800000', 'FF6600',
+    '808000', '008000', '008080', '0000FF', '666699', '808080', 'FF0000', 'FF9900',
+    '99CC00', '339966', '33CCCC', '3366FF', '800080', '999999', 'FF00FF', 'FFCC00',
+    'FFFF00', '00FF00', '00FFFF', '00CCFF', '993366', 'C0C0C0', 'FF99CC', 'FFCC99',
+    'FFFF99', 'CCFFFF', '99CCFF', 'FFFFFF'
+];
+var colorsIndex = 0;
 
 var timerec = 0;
 var vinTrackPlaying = {};            //保存正在播放的轨迹（只针对有多条轨迹的车辆）
@@ -73,7 +77,7 @@ var infoPool = null;
 var timerecDB = 0;      //数据库时间戳
 var timerecPlayingTo = 0; //前端播放轨迹的时间终点
 
-var ratePool = 60000;   //从pool中取数据的频率
+var ratePool = 5000;   //从pool中取数据的频率
 var rateDB = 60000;     //从DB中取数据的频率
 
 
@@ -368,9 +372,11 @@ function setCurrentData(result) {
     offline = 0;
     online = 0;
     var groupNames = [];
+    var baseGroupNames = ['外部车辆数据组','EVM数据组','CTF数据组'];
 
     var trackData = result[0];
-    var carData = result[1].reverse();
+    //var carData = result[1].reverse();
+    var carData = result[1];
     var carDataLen = carData.length;
     var trackDataLen = trackData.length;
     var i, groupName, vinNumber, carNode, states;
@@ -389,15 +395,18 @@ function setCurrentData(result) {
         }
 
         // 车辆信息
+        groupData[groupName].push(vinNumber);
         if (vinNumbers.indexOf(vinNumber) === -1) {
-            groupData[groupName].push(vinNumber);
             vinNumbers.push(vinNumber);
             currentCarData[vinNumber] = [];
             currentTrackData[vinNumber] = [];
-
         }
         // 车辆信息
         if (currentCarData[vinNumber].length === 0) {
+            currentCarData[vinNumber].push(carNode.States, groupName, carNode.Code, carNode.PatacId, carNode.States, carNode.TestId, carNode.Vsid);
+        }
+        else if(baseGroupNames.indexOf(groupName) === -1){
+            currentCarData[vinNumber] = [];
             currentCarData[vinNumber].push(carNode.States, groupName, carNode.Code, carNode.PatacId, carNode.States, carNode.TestId, carNode.Vsid);
         }
         //路径点位信息，将info表的点加入第一条轨迹的第一个点
@@ -407,10 +416,10 @@ function setCurrentData(result) {
     }
 
 
-    i=0;
+    
     for(x in groupData){
         if(chooseColors[x] === undefined){
-            chooseColors[x] = colors[i++];
+            chooseColors[x] = colors[colorsIndex++];
         }
     }
 
@@ -616,7 +625,7 @@ function showTrack() {
     addPoint();
     //更新气泡
     if (ballon != null) {
-        ballon.InvokeScript("updateBallon", [oldGroupData, true, oldCarData, vinVisibility]);
+        ballon.InvokeScript("updateBallon", [oldGroupData, true, oldCarData, vinVisibility, chooseColors]);
     }
     //根据以前选择状态车辆显示，名称类型
     setTrackStatus();

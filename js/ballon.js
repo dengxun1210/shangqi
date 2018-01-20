@@ -9,7 +9,7 @@ var colors = [
     'FFFF99', 'CCFFFF', '99CCFF', 'FFFFFF'
 ];
 //组选的颜色
-var chooseColors = {};
+//var chooseColors = {};
 //车隐藏与否,和checkbox一致
 var carHideOrNot = {};
 //组隐藏与否
@@ -181,14 +181,14 @@ function makeColorTable() {
 //每20s，主页面数据更新后，刷新气泡数据
 //[oldGroupData, true, oldCarData]
 function updateBallon(obj){
-    $(".wrapper .car-tree .tree-body").empty().initTreeList(obj[0], obj[1], obj[2], obj[3]);
+    $(".wrapper .car-tree .tree-body").empty().initTreeList(obj[0], obj[1], obj[2], obj[3], obj[4]);
 }
 
 
 
 
 
-jQuery.fn.initTreeList = function(groupData, needColor, carData, vinVisibility){
+jQuery.fn.initTreeList = function(groupData, needColor, carData, vinVisibility, chooseColors){
 
     var colorTable;
     if(needColor && needColor!== undefined){
@@ -205,9 +205,10 @@ jQuery.fn.initTreeList = function(groupData, needColor, carData, vinVisibility){
     var treeNodes = $("<div class='ownTree'></div>");
     var i = 0;
     for(x in groupData){
+        /*
         if(chooseColors[x] === undefined){
             chooseColors[x] = colors[i++];
-        }
+        }*/
         if(groupBackGroudColors[x] === undefined){
             groupBackGroudColors[x] = "#eee";
         }
