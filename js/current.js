@@ -77,7 +77,7 @@ var infoPool = null;
 var timerecDB = 0;      //数据库时间戳
 var timerecPlayingTo = 0; //前端播放轨迹的时间终点
 
-var ratePool = 5000;   //从pool中取数据的频率
+var ratePool = 60000;   //从pool中取数据的频率
 var rateDB = 60000;     //从DB中取数据的频率
 
 
@@ -1012,7 +1012,7 @@ function changeTag(tagClass) {
                 track = earth.GPSTrackControl.GetTrack(x);
                 vinNumber = oldTrackVin[x];
                 trackStatus = oldCarData[vinNumber][0];
-                if (!vinVisibility[vinNumber]) {
+                if (!vinVisibility[vinNumber] || (trackStatus === "1" && !onlineStatus) || (trackStatus === "0" && !offlineStatus)) {
                     continue;
                 }
                 if(track.ShowName){
@@ -1031,7 +1031,7 @@ function changeTag(tagClass) {
                 track = earth.GPSTrackControl.GetTrack(x);
                 tag = oldTrackVin[x];
                 track.Name = tag;
-                if (!vinVisibility[vinNumber]) {
+                if (!vinVisibility[vinNumber] || (trackStatus === "1" && !onlineStatus) || (trackStatus === "0" && !offlineStatus)) {
                     continue;
                 }
                 track.ShowName = true;
@@ -1054,7 +1054,7 @@ function changeTag(tagClass) {
                     tag = oldCarData[vinNumber][5];
                     track.Name = tag;
                 }
-                if (!vinVisibility[vinNumber]) {
+                if (!vinVisibility[vinNumber] || (trackStatus === "1" && !onlineStatus) || (trackStatus === "0" && !offlineStatus)) {
                     continue;
                 }
                 track.ShowName = true;
@@ -1077,7 +1077,7 @@ function changeTag(tagClass) {
                     tag = oldCarData[vinNumber][3];
                     track.Name = tag;
                 }
-                if (!vinVisibility[vinNumber]) {
+                if (!vinVisibility[vinNumber] || (trackStatus === "1" && !onlineStatus) || (trackStatus === "0" && !offlineStatus)) {
                     continue;
                 }
                 track.ShowName = true;
@@ -1098,7 +1098,7 @@ function changeTag(tagClass) {
                     tag = oldCarData[vinNumber][3];
                     track.Name = tag;
                 }
-                if (!vinVisibility[vinNumber]) {
+                if (!vinVisibility[vinNumber] || (trackStatus === "1" && !onlineStatus) || (trackStatus === "0" && !offlineStatus)) {
                     continue;
                 }
 
@@ -1122,10 +1122,9 @@ function changeTag(tagClass) {
                     tag = oldCarData[vinNumber][6];
                     track.Name = tag;
                 }
-                if (!vinVisibility[vinNumber]) {
+                if (!vinVisibility[vinNumber] || (trackStatus === "1" && !onlineStatus) || (trackStatus === "0" && !offlineStatus)) {
                     continue;
                 }
-
                 track.ShowName = true;
                 track.ShowInfomation = true;
 
