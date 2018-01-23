@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Created by Administrator on 2017/8/2.
  */
 /*球加载、气泡设置生成*/
@@ -34,8 +34,8 @@ var oldCarData = {};            //用于保存车辆信息, 用于页面操作
 var currentTrackData = {};      //轨迹点信息
 var tempTrackData = {};         //暂时用于保存轨迹信息，用于添加轨迹点
 var oldTrackData = {};
-var needAddTrack = [];           //需要删除轨迹
-var needDeleteTrack = [];       //需要添加轨迹
+var needAddTrack = [];          //需要添加轨迹 
+var needDeleteTrack = [];       //需要删除轨迹
 var samePosition = [0, 0];           //解决位置相等
 var samePositionAdd = [0, 0, 0];
 //视角选择所需变量
@@ -77,8 +77,10 @@ var infoPool = null;
 var timerecDB = 0;      //数据库时间戳
 var timerecPlayingTo = 0; //前端播放轨迹的时间终点
 
-var ratePool = 60000;   //从pool中取数据的频率
+var ratePool = 20000;   //从pool中取数据的频率
 var rateDB = 60000;     //从DB中取数据的频率
+
+var ifCreateTrack_temp= true;
 
 
 $(function () {
@@ -265,7 +267,12 @@ function updateTrackData(results){
     //基础更新根据新旧数据增减来增加轨迹
     basicUpdateData();
     //console.debug('needAddTrack增加track：'+needAddTrack.length);
-    createTrack(needAddTrack);
+    if(ifCreateTrack_temp){
+        createTrack(needAddTrack);
+    }
+    else{
+        createTrack(needAddTrack,100000);
+    }
 }
 
 //DB小轮询，检查时间戳
@@ -380,6 +387,7 @@ function setCurrentData(result) {
     var carDataLen = carData.length;
     var trackDataLen = trackData.length;
     var i, groupName, vinNumber, carNode, states;
+    var infoStates = {};
 
     //车辆信息
     for (i = 0; i < carDataLen; i++) {
@@ -387,7 +395,13 @@ function setCurrentData(result) {
         groupName = carNode.GroupName;
         vinNumber = carNode.VinNumber;
         states = carNode.States;
-
+        //输出states
+        if(infoStates[states]===undefined){
+            infoStates[states] = 1;
+        }
+        else{
+            infoStates[states]++;
+        }
         // 树状列表所需数据groupData
         if (groupNames.indexOf(groupName) === -1) {
             groupNames.push(groupName);
@@ -415,6 +429,11 @@ function setCurrentData(result) {
         }
     }
 
+    var str = 'info表states统计：';
+    for(infos in infoStates){
+        str+=infos+':'+infoStates[infos]+',';
+    }
+    console.debug(str);
 
     
     for(x in groupData){
@@ -496,6 +515,8 @@ function setCurrentData(result) {
 function basicUpdateData() {
     needDeleteTrack = [];
     needAddTrack = [];
+    var tempii1 = 0;
+    var tempii2 = 0;
     //如果数据以前没有轨迹，现在出现，则添加轨迹
     for (var i = 0; i < vinNumbers.length; i++) {
         var vinNumber = vinNumbers[i];
@@ -506,6 +527,7 @@ function basicUpdateData() {
             for (var j = 0; j < currentTrackData[vinNumber].length; j++) {
                 var guid = earth.Factory.CreateGuid();
                 needAddTrack.push(guid);
+                tempii1++;
                 vinTrack[vinNumber].push(guid);
                 trackVin[guid] = vinNumber;
                 //这里看一下
@@ -529,6 +551,7 @@ function basicUpdateData() {
             var saveOldLastGuid = true;
             if (oldStatus === "0" && status === "1") { //以前离线，现在在线
                 saveOldLastGuid = false;
+                console.debug('离线，在线：'+vinNumber);
             }
             var leftGuid;//保留guid
             //删除track
@@ -555,6 +578,8 @@ function basicUpdateData() {
                 else{
                     guid = earth.Factory.CreateGuid();
                     needAddTrack.push(guid);
+                    console.debug(vinNumber);//LSGVF53A6KY000034
+                    tempii2++;
                 }
                 vinTrack[vinNumber].push(guid);
                 trackVin[guid] = vinNumber;
@@ -566,6 +591,9 @@ function basicUpdateData() {
             }
         }
     }
+    //console.debug('tempii1:'+tempii1);
+    //console.debug('tempii2:'+tempii2);
+    //console.debug(needAddTrack.length);
 
     //如果数据以前有轨迹，现在没有，则添加删除
     for (i = 0, len = oldVinNumbers.length; i < len; i++) {
@@ -901,6 +929,7 @@ function setSpeedTimeout(track, data, index) {
     setSpeedTimeout(track, data, ++index);
 }
 
+//设置定时器，变化车辆显示速度
 //index:轨迹的序号，对同一辆车
 function setSpeedTimeout2(track, vinNumber, index){
     var points = oldTrackData[vinNumber][index];

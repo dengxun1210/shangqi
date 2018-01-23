@@ -94,17 +94,19 @@ function createTrack(trackIds, trackIndex, history) {
     var trackId = trackIds[trackIndex];
     if(trackId === undefined){
         showTrack();
+        //ifCreateTrack_temp = false;
         return;
     }
     var trackName = trackVin[trackId];
     var indexInGroup = trackIndexInGroup[trackId];
+    /*
     if(trackName == null){
         console.debug('trackName为null');
     }
     if(indexInGroup == null){
         console.debug('indexInGroup为null');
     }
-    /*
+    
     if(history === "history"){
         trackName = historyTracks[trackIndex];
     }*/
@@ -120,7 +122,7 @@ function createTrack(trackIds, trackIndex, history) {
              track.Visibility = true;
             }else{
             track.Visibility = false;}*/
-            track.Visibility = false;
+            track.Visibility = true;
             track.ShowName = true;
             track.ShowInfomation = false;
             track.NameColor = 0xffffffff;
