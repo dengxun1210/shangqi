@@ -13,6 +13,7 @@ var distance;
  * 加载球*/
 $(function () {
     getInitData2(900000);//从数据库取15分钟数据
+    //getInitData2(30000);
 });
 
 function initMap(){

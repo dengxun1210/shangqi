@@ -77,8 +77,8 @@ var infoPool = null;
 var timerecDB = 0;      //数据库时间戳
 var timerecPlayingTo = 0; //前端播放轨迹的时间终点
 
-var ratePool = 20000;   //从pool中取数据的频率
-var rateDB = 60000;     //从DB中取数据的频率
+var ratePool = 20000;   //从pool中取数据的频率20000
+var rateDB = 60000;     //从DB中取数据的频率60000
 
 var ifCreateTrack_temp= true;
 
@@ -328,7 +328,7 @@ function tryGetDBData() {
 //从数据库取数据
 function getDBData(timeTo){
     var trackSql = {
-        sql: "select * from track where SamplingTime >= "+timerecDB+" and SamplingTime <"+timeTo
+        sql: "select * from track where SamplingTime >= "+timerecDB+" and SamplingTime <"+timeTo+" ORDER BY SamplingTime"
     };
     var timenow = new Date().getTime();
     $.ajax({
@@ -340,9 +340,21 @@ function getDBData(timeTo){
             var ttt = new Date().getTime()-timenow;
             console.debug('从数据库取数据：'+timerecDB+'--'+timeTo+',取出数据条数：'+result0.length+',耗时：'+ttt);
             timerecDB = timeTo;
+            trackPool.push.apply(trackPool,result0);//装入track池
+            /*
+            var lenOld = trackPool.length;
+            trackPool.push.apply(trackPool,result0);//装入track池
+            var lenNew = trackPool.length;
+            if(lenNew==lenOld+result0.length){
+                console.debug('装入pool后数据条数：'+lenNew);
+            }
+            else{
+                var lenMiss = result0.length-(lenNew-lenOld);
+                console.debug('装入pool后数据丢失：'+lenMiss);
+            }
             for(var i=0;i<result0.length;i++){
                 trackPool.push(result0[i]);//装入track池
-            }
+            }*/
             var carSql = {
                 sql: "select * from vehicleinfo"
             };
@@ -551,7 +563,7 @@ function basicUpdateData() {
             var saveOldLastGuid = true;
             if (oldStatus === "0" && status === "1") { //以前离线，现在在线
                 saveOldLastGuid = false;
-                console.debug('离线，在线：'+vinNumber);
+                //console.debug('离线，在线：'+vinNumber);
             }
             var leftGuid;//保留guid
             //删除track
@@ -578,7 +590,7 @@ function basicUpdateData() {
                 else{
                     guid = earth.Factory.CreateGuid();
                     needAddTrack.push(guid);
-                    console.debug(vinNumber);//LSGVF53A6KY000034
+                    //console.debug(vinNumber);//LSGVF53A6KY000034
                     tempii2++;
                 }
                 vinTrack[vinNumber].push(guid);
