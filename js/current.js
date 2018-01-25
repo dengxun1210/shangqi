@@ -996,20 +996,23 @@ function hideVinTree(vinNumber) {
 
 //树上点击显示车辆
 function showVinTree(vinNumber) {
-    var tracklen = oldVinTrack[vinNumber].length;  
-    for (var i = 0; i <tracklen; i++) {
-        if(tracklen>1){
-            //如果多条轨迹，只显示正在播放的唯一轨迹
-            if(vinTrackPlaying[vinNumber] === oldVinTrack[vinNumber][i])
-            {
+    vinVisibility[vinNumber] = true;
+    var trackStatus = oldCarData[vinNumber][0];
+    if ((trackStatus === "1" && onlineStatus) || (trackStatus === "0" && offlineStatus)) {
+        var tracklen = oldVinTrack[vinNumber].length;  
+        for (var i = 0; i <tracklen; i++) {
+            if(tracklen>1){
+                //如果多条轨迹，只显示正在播放的唯一轨迹
+                if(vinTrackPlaying[vinNumber] === oldVinTrack[vinNumber][i])
+                {
+                    showHideTrack(oldVinTrack[vinNumber][i], true)
+                }
+            }
+            else{
                 showHideTrack(oldVinTrack[vinNumber][i], true)
             }
         }
-        else{
-            showHideTrack(oldVinTrack[vinNumber][i], true)
-        }
     }
-    vinVisibility[vinNumber] = true;
 }
 
 //树上点击改变车辆颜色

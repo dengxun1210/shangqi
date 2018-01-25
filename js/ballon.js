@@ -308,22 +308,15 @@ jQuery.fn.initTreeList = function(groupData, needColor, carData, vinVisibility, 
                 hideTrack(vinName);
             }
         }else{
-            //显示
-            var f_ifaction = false;
+            //显示         
             for(var i=0;i<carNodes.length;i++){
                 var vinName = $(carNodes[i]).html();
-                if((carOnlineOrNot[vinName] === "green" && m_parentFun.getOnOffStatus(1)) || (carOnlineOrNot[vinName] === "red" && m_parentFun.getOnOffStatus(2))){
-                    console.debug(vinName);
-                    $(carNodes[i]).parent().removeClass("uncheck");
-                    showTrack(vinName);
-                    f_ifaction = true;
-                }
+                $(carNodes[i]).parent().removeClass("uncheck");
+                showTrack(vinName);
             }
-            if(f_ifaction){
-                //更新group的checkbox
-                groupHideOrNot[groupName] = "";
-                groupNode.removeClass("uncheck");
-            }
+            //更新group的checkbox
+            groupHideOrNot[groupName] = "";
+            groupNode.removeClass("uncheck");
         }
     });
     // 车辆点击显示隐藏车辆
@@ -331,40 +324,33 @@ jQuery.fn.initTreeList = function(groupData, needColor, carData, vinVisibility, 
         var checkStatus = $(this).find("i:nth-child(2)").css("display");
         var trackName = $(this).parent().find(".trackName").html();
         var vinNode = $(this).parent();
-        var f_ifaction = false;
         if(checkStatus === "inline-block" || checkStatus === "block"){
             //隐藏            
             vinNode.addClass("uncheck");
             hideTrack(trackName);
-            f_ifaction = true;
         }else{
             //显示
-            if((carOnlineOrNot[trackName] === "green" && m_parentFun.getOnOffStatus(1)) || (carOnlineOrNot[trackName] === "red" && m_parentFun.getOnOffStatus(2))){
-                vinNode.removeClass("uncheck");
-                showTrack(trackName);
-                f_ifaction = true;
-            }
+            vinNode.removeClass("uncheck");
+            showTrack(trackName);
         }
-        if(f_ifaction){
-            //更新group的checkbox
-            var groupName = $(this).parent().parent().parent().find(".groupName").html();
-            var oneGroup = groupData[groupName];
-            var f_groupShow = false;//重新计算group的checkbox是否打勾
-            for(y in oneGroup){
-                var vinName = oneGroup[y]; 
-                if(carHideOrNot[vinName] === ""){
-                    f_groupShow = true;
-                }    
-            }
-            var groupNode = $(this).parent().parent().parent().find(".group-node");
-            if(f_groupShow){
-                groupHideOrNot[groupName] = "";
-                groupNode.removeClass("uncheck");
-            }
-            else{
-                groupHideOrNot[groupName] = "uncheck";
-                groupNode.addClass("uncheck");
-            }
+        //更新group的checkbox
+        var groupName = $(this).parent().parent().parent().find(".groupName").html();
+        var oneGroup = groupData[groupName];
+        var f_groupShow = false;//重新计算group的checkbox是否打勾
+        for(y in oneGroup){
+            var vinName = oneGroup[y]; 
+            if(carHideOrNot[vinName] === ""){
+                f_groupShow = true;
+            }    
+        }
+        var groupNode = $(this).parent().parent().parent().find(".group-node");
+        if(f_groupShow){
+            groupHideOrNot[groupName] = "";
+            groupNode.removeClass("uncheck");
+        }
+        else{
+            groupHideOrNot[groupName] = "uncheck";
+            groupNode.addClass("uncheck");
         }
     });
 
