@@ -216,8 +216,9 @@ jQuery.fn.initTreeList = function(groupData, needColor, carData, vinVisibility, 
             groupOpen[x] = false;
         }
     }
+    var html = "";
     for(x in groupData){       
-        var childContainer = $("<div class='childs-node'></div>");
+        var childContainer = "";
         var oneGroup = groupData[x];
         var f_groupShow = false;//重新计算group的checkbox是否打勾
         for(y in oneGroup){
@@ -243,8 +244,6 @@ jQuery.fn.initTreeList = function(groupData, needColor, carData, vinVisibility, 
                 lbl = "离线";
                 carOnlineOrNot[vinName] = "red";
             }
-
-
             if(vinName===m_chooseCar){
                 choosed = 'choosed';
                 choosedStay = true;
@@ -252,21 +251,19 @@ jQuery.fn.initTreeList = function(groupData, needColor, carData, vinVisibility, 
             else{
                 choosed = '';
             }
-            var childNode = $("<div class='child-node "+color+" "+choosed+" "+carHideOrNot[vinName]+"'><span class='trackName'>"+vinName+"</span><span class='carStatus'>（"+lbl+"）</span><span class='checkboxInput fa-stack fa-lg'><i class='fa fa-square-o fa-stack-1x'></i><i class='fa fa-check fa-stack-1x'></i></span></div>");
-            childContainer.append(childNode);
+            childContainer+="<div class='child-node "+color+" "+choosed+" "+carHideOrNot[vinName]+"'><span class='trackName'>"+vinName+"</span><span class='carStatus'>（"+lbl+"）</span><span class='checkboxInput fa-stack fa-lg'><i class='fa fa-square-o fa-stack-1x'></i><i class='fa fa-check fa-stack-1x'></i></span></div>";
         }
+
+        childContainer = "<div class='childs-node'>"+childContainer+"</div>";
 
         var groupColor = chooseColors[x];
         var groupBackGroudColor = groupBackGroudColors[x];
         groupHideOrNot[x] = f_groupShow?"":"uncheck";
-        var groupNode = $("<div class='group'><div class='group-node "+groupHideOrNot[x]+"'><span></span><span class='"+colorTable+"' style='background:#"+groupColor+"'></span><span class='groupName'>"+x+"</span><span class='checkboxInput fa-stack fa-lg'><i class='fa fa-square-o fa-stack-1x'></i><i class='fa fa-check fa-stack-1x'></i></span></div></div>");
-
-
-        groupNode.append(childContainer);
-        $(this).append(groupNode);
+        var groupNode = "<div class='group'><div class='group-node "+groupHideOrNot[x]+"'><span></span><span class='"+colorTable+"' style='background:#"+groupColor+"'></span><span class='groupName'>"+x+"</span><span class='checkboxInput fa-stack fa-lg'><i class='fa fa-square-o fa-stack-1x'></i><i class='fa fa-check fa-stack-1x'></i></span></div>"+childContainer+"</div>";
+        html+=groupNode;
     }
-    var colorNode = $("<div class='colors'><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>");
-    $(this).append(colorNode);
+    html+="<div class='colors'><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>";
+    $(this).html(html);
     makeColorTable();
 
     if(!choosedStay){

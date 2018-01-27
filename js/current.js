@@ -492,7 +492,7 @@ function setCurrentData(result) {
                    currentTrackData[vinNumber][len-1].push([trackNode.Longtitude, trackNode.Latitude, trackNode.height, trackNode.SamplingTime, trackNode.Speed]);
                 }
                 else{
-                    //0-1，0-0，加点到track
+                    //2-1，2-0，创建track
                     currentTrackData[vinNumber].push([[trackNode.Longtitude, trackNode.Latitude, trackNode.height, trackNode.SamplingTime, trackNode.Speed]]); 
                 }
             }
@@ -590,7 +590,7 @@ function basicUpdateData() {
                 else{
                     guid = earth.Factory.CreateGuid();
                     needAddTrack.push(guid);
-                    //console.debug(vinNumber);//LSGVF53A6KY000034
+                    console.debug(vinNumber);//LSGVF53A6KY000034
                     tempii2++;
                 }
                 vinTrack[vinNumber].push(guid);
@@ -603,9 +603,9 @@ function basicUpdateData() {
             }
         }
     }
-    //console.debug('tempii1:'+tempii1);
-    //console.debug('tempii2:'+tempii2);
-    //console.debug(needAddTrack.length);
+    /*console.debug('tempii1:'+tempii1);
+    console.debug('tempii2:'+tempii2);
+    console.debug(needAddTrack.length);*/
 
     //如果数据以前有轨迹，现在没有，则添加删除
     for (i = 0, len = oldVinNumbers.length; i < len; i++) {
